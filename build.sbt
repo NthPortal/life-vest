@@ -30,8 +30,13 @@ val sharedSettings = Seq(
   mimaPreviousArtifacts := Set().map(organization.value %% name.value % _),
   mimaFailOnNoPrevious := true,
   libraryDependencies ++= Seq(
-    "org.scalatest" %% "scalatest" % "3.2.2" % Test,
     "com.typesafe.akka" %% "akka-stream" % akkaVersion,
+    "org.scalatest" %% "scalatest" % "3.2.2" % Test,
+  ),
+  scalacOptions ++= Seq(
+    "-Xlint",
+    "-feature",
+    "-Werror",
   ),
   scalacOptions ++= {
     if (isSnapshot.value) Nil
