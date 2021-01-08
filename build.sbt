@@ -41,10 +41,23 @@ inThisBuild(
       "graalvm-ce-java8@20.2.0",
     ),
     githubWorkflowBuild := Seq(
-      WorkflowStep.Sbt(List("coverage", "test", "coverageAggregate", "coveralls"), name = Some("Test with Coverage")),
-      WorkflowStep.Sbt(List("clean", "mimaReportBinaryIssues"), name = Some("Binary Compatibility")),
-      WorkflowStep.Sbt(List("scalafmtCheckAll", "scalafmtSbtCheck"), name = Some("Formatting")),
-      WorkflowStep.Sbt(List("doc"), name = Some("Check Docs")),
+      WorkflowStep.Sbt(
+        List("coverage", "test", "coverageAggregate", "coveralls"),
+        name = Some("Test with Coverage"),
+        env = Map("COVERALLS_REPO_TOKEN" -> "${{ secrets.COVERALLS_REPO_TOKEN }}"),
+      ),
+      WorkflowStep.Sbt(
+        List("clean", "mimaReportBinaryIssues"),
+        name = Some("Binary Compatibility"),
+      ),
+      WorkflowStep.Sbt(
+        List("scalafmtCheckAll", "scalafmtSbtCheck"),
+        name = Some("Formatting"),
+      ),
+      WorkflowStep.Sbt(
+        List("doc"),
+        name = Some("Check Docs"),
+      ),
     ),
     githubWorkflowPublishPreamble += WorkflowStep.Use("olafurpg", "setup-gpg", "v3"),
     githubWorkflowPublish := Seq(

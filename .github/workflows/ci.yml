@@ -57,6 +57,8 @@ jobs:
         run: sbt ++${{ matrix.scala }} githubWorkflowCheck
 
       - name: Test with Coverage
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
         run: sbt ++${{ matrix.scala }} coverage test coverageAggregate coveralls
 
       - name: Binary Compatibility
