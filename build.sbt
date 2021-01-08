@@ -25,13 +25,49 @@ inThisBuild(
   ),
 )
 
+// CI config
+inThisBuild(
+  Seq(
+    githubWorkflowTargetTags ++= Seq("v*"),
+    githubWorkflowPublishTargetBranches ++= Seq(
+      RefPredicate.Equals(Ref.Branch("main")),
+      RefPredicate.StartsWith(Ref.Tag("v")),
+    ),
+    githubWorkflowPublish := Seq(WorkflowStep.Sbt(List("ci-release"))),
+    githubWorkflowJavaVersions := Seq(
+      "adopt@1.8",
+      "adopt@1.11",
+      "adopt@1.15",
+      "graalvm-ce-java8@20.2.0",
+    ),
+    githubWorkflowBuild := Seq(
+      WorkflowStep.Sbt(List("coverage", "test", "coverageAggregate", "coveralls"), name = Some("Test with Coverage")),
+      WorkflowStep.Sbt(List("clean", "mimaReportBinaryIssues"), name = Some("Binary Compatibility")),
+      WorkflowStep.Sbt(List("scalafmtCheckAll", "scalafmtSbtCheck"), name = Some("Formatting")),
+      WorkflowStep.Sbt(List("doc"), name = Some("Check Docs")),
+    ),
+    githubWorkflowPublishPreamble += WorkflowStep.Use("olafurpg", "setup-gpg", "v3"),
+    githubWorkflowPublish := Seq(
+      WorkflowStep.Sbt(
+        List("ci-release"),
+        env = Map(
+          "PGP_PASSPHRASE"    -> "${{ secrets.PGP_PASSPHRASE }}",
+          "PGP_SECRET"        -> "${{ secrets.PGP_SECRET }}",
+          "SONATYPE_PASSWORD" -> "${{ secrets.SONATYPE_PASSWORD }}",
+          "SONATYPE_USERNAME" -> "${{ secrets.SONATYPE_USERNAME }}",
+        ),
+      ),
+    ),
+  ),
+)
+
 val akkaVersion = "2.6.10"
 val sharedSettings = Seq(
   mimaPreviousArtifacts := Set().map(organization.value %% name.value % _),
   mimaFailOnNoPrevious := true,
   libraryDependencies ++= Seq(
     "com.typesafe.akka" %% "akka-stream" % akkaVersion,
-    "org.scalatest" %% "scalatest" % "3.2.2" % Test,
+    "org.scalatest"     %% "scalatest"   % "3.2.2" % Test,
   ),
   scalacOptions ++= Seq(
     "-Xlint",
