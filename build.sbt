@@ -53,6 +53,7 @@ inThisBuild(
         ),
         javas = githubWorkflowJavaVersions.value.toList,
         scalas = crossScalaVersions.value.toList,
+        needs = List("build"),
         matrixFailFast = Some(false),
       ),
       WorkflowJob(
@@ -63,6 +64,7 @@ inThisBuild(
         ),
         javas = List(PrimaryJava),
         scalas = crossScalaVersions.value.toList,
+        needs = List("build"),
         matrixFailFast = Some(false),
       ),
       WorkflowJob(
@@ -78,6 +80,7 @@ inThisBuild(
         env = Map("COVERALLS_REPO_TOKEN" -> "${{ secrets.COVERALLS_REPO_TOKEN }}"),
         javas = List(PrimaryJava),
         scalas = crossScalaVersions.value.toList,
+        needs = List("build"),
         matrixFailFast = Some(false),
       ),
       WorkflowJob(
@@ -88,6 +91,7 @@ inThisBuild(
         ),
         javas = List(PrimaryJava),
         scalas = List(scalaVersion.value),
+        needs = List("build"),
         matrixFailFast = Some(false),
       ),
       WorkflowJob(
@@ -98,6 +102,7 @@ inThisBuild(
         ),
         javas = List(PrimaryJava),
         scalas = List(scalaVersion.value),
+        needs = List("build"),
         matrixFailFast = Some(false),
       ),
     ),

@@ -122,6 +122,7 @@ jobs:
 
   test:
     name: Test
+    needs: [build]
     strategy:
       fail-fast: false
       matrix:
@@ -161,6 +162,7 @@ jobs:
 
   bincompat:
     name: Binary Compatibility
+    needs: [build]
     strategy:
       fail-fast: false
       matrix:
@@ -196,6 +198,7 @@ jobs:
 
   coverage:
     name: Coverage
+    needs: [build]
     strategy:
       fail-fast: false
       matrix:
@@ -234,6 +237,7 @@ jobs:
 
   formatting:
     name: Formatting
+    needs: [build]
     strategy:
       fail-fast: false
       matrix:
@@ -269,6 +273,7 @@ jobs:
 
   check-docs:
     name: Check Docs
+    needs: [build]
     strategy:
       fail-fast: false
       matrix:
