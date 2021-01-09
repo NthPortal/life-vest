@@ -70,11 +70,12 @@ inThisBuild(
         "Coverage",
         githubWorkflowJobSetup.value.toList ::: List(
           WorkflowStep.Sbt(
-            List("coverage", "test", "coverageAggregate", "coveralls"), name = Some("Coverage"),
+            List("coverage", "test", "coverageAggregate", "coveralls"),
+            name = Some("Coveralls"),
+            cond = Some("env.COVERALLS_REPO_TOKEN != ''"),
           ),
         ),
         env = Map("COVERALLS_REPO_TOKEN" -> "${{ secrets.COVERALLS_REPO_TOKEN }}"),
-        cond = Some("env.COVERALLS_REPO_TOKEN != ''"),
         javas = List(PrimaryJava),
         scalas = crossScalaVersions.value.toList,
         matrixFailFast = Some(false),
