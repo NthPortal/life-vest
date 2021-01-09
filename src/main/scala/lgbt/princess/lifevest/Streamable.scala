@@ -551,7 +551,8 @@ object Streamable {
     implicit object Diff2 extends Diff2
   }
 
-  private final val mutableCollectionSupportMsg =
+  // This can just be `private`, but scaladoc is both wrong AND doesn't support -Wconf
+  private[Streamable] final val mutableCollectionSupportMsg =
     "Mutable collections are not supported by default, as they must often be converted immediately to " +
       "immutable collections in order to be used. To use mutable collections, import " +
       "MutableCollectionSupport.Implicits.support"
