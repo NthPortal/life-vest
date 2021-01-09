@@ -136,7 +136,7 @@ class StreamableTest extends BaseSpec {
       get(instance.streamable.flatMap(elem => S.single(elem + 1))) shouldEqual instance.values.map(_ + 1)
       get(instance.streamable.flatMap(elem => S.elems(elem, 2))) shouldEqual instance.values.flatMap(List(_, 2))
       get(
-        instance.streamable.flatMap(elem => S.elems(elem, 2).withFilter(_ => true))
+        instance.streamable.flatMap(elem => S.elems(elem, 2).withFilter(_ => true)),
       ) shouldEqual instance.values.flatMap(List(_, 2))
       get(instance.streamable.flatMap(elem => S(ListBuffer(elem, 2)))) shouldEqual instance.values.flatMap(List(_, 2))
     }
@@ -161,7 +161,7 @@ class StreamableTest extends BaseSpec {
       get(instance.streamable.flatMap(elem => mixedElems(elem + 1))) shouldEqual instance.values.map(_ + 1)
       get(instance.streamable.flatMap(elem => mixedElems(elem, 2))) shouldEqual instance.values.flatMap(List(_, 2))
       get(
-        instance.streamable.flatMap(elem => mixedElems(elem, 2).withFilter(_ => true))
+        instance.streamable.flatMap(elem => mixedElems(elem, 2).withFilter(_ => true)),
       ) shouldEqual instance.values.flatMap(List(_, 2))
     }
 

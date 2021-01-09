@@ -10,8 +10,8 @@ import scala.concurrent.Await
 import scala.concurrent.duration._
 
 abstract class BaseSpec extends AnyFlatSpec with Matchers with OptionValues with LoneElement with BeforeAndAfterAll {
-  private[this] var sys: ActorSystem = _
-  implicit protected def system: ActorSystem   = sys
+  private[this] var sys: ActorSystem         = _
+  implicit protected def system: ActorSystem = sys
 
   override def beforeAll(): Unit = {
     sys = ActorSystem()

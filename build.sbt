@@ -26,6 +26,8 @@ inThisBuild(
 )
 
 // CI config
+val PrimaryJava = "adopt@1.8"
+
 inThisBuild(
   Seq(
     githubWorkflowTargetTags ++= Seq("v*"),
@@ -33,7 +35,6 @@ inThisBuild(
       RefPredicate.Equals(Ref.Branch("main")),
       RefPredicate.StartsWith(Ref.Tag("v")),
     ),
-    githubWorkflowPublish := Seq(WorkflowStep.Sbt(List("ci-release"))),
     githubWorkflowJavaVersions := Seq(
       "adopt@1.8",
       "adopt@1.11",
@@ -41,22 +42,62 @@ inThisBuild(
       "graalvm-ce-java8@20.2.0",
     ),
     githubWorkflowBuild := Seq(
-      WorkflowStep.Sbt(
-        List("coverage", "test", "coverageAggregate", "coveralls"),
-        name = Some("Test with Coverage"),
+      WorkflowStep.Sbt(List("compile", "test:compile"), name = Some("Compile")),
+    ),
+    githubWorkflowAddedJobs ++= Seq(
+      WorkflowJob(
+        "test",
+        "Test",
+        githubWorkflowJobSetup.value.toList ::: List(
+          WorkflowStep.Sbt(List("test"), name = Some("Test")),
+        ),
+        javas = githubWorkflowJavaVersions.value.toList,
+        scalas = crossScalaVersions.value.toList,
+        matrixFailFast = Some(false),
+      ),
+      WorkflowJob(
+        "bincompat",
+        "Binary Compatibility",
+        githubWorkflowJobSetup.value.toList ::: List(
+          WorkflowStep.Sbt(List("clean", "mimaReportBinaryIssues"), name = Some("MiMa")),
+        ),
+        javas = List(PrimaryJava),
+        scalas = crossScalaVersions.value.toList,
+        matrixFailFast = Some(false),
+      ),
+      WorkflowJob(
+        "coverage",
+        "Coverage",
+        githubWorkflowJobSetup.value.toList ::: List(
+          WorkflowStep.Sbt(
+            List("coverage", "test", "coverageAggregate", "coveralls"), name = Some("Coverage"),
+          ),
+        ),
         env = Map("COVERALLS_REPO_TOKEN" -> "${{ secrets.COVERALLS_REPO_TOKEN }}"),
+        cond = Some("env.COVERALLS_REPO_TOKEN != ''"),
+        javas = List(PrimaryJava),
+        scalas = crossScalaVersions.value.toList,
+        matrixFailFast = Some(false),
       ),
-      WorkflowStep.Sbt(
-        List("clean", "mimaReportBinaryIssues"),
-        name = Some("Binary Compatibility"),
+      WorkflowJob(
+        "formatting",
+        "Formatting",
+        githubWorkflowJobSetup.value.toList ::: List(
+          WorkflowStep.Sbt(List("scalafmtCheckAll", "scalafmtSbtCheck"), name = Some("Formatting")),
+        ),
+        javas = List(PrimaryJava),
+        scalas = List(scalaVersion.value),
+        matrixFailFast = Some(false),
       ),
-      WorkflowStep.Sbt(
-        List("scalafmtCheckAll", "scalafmtSbtCheck"),
-        name = Some("Formatting"),
-      ),
-      WorkflowStep.Sbt(
-        List("doc"),
-        name = Some("Check Docs"),
+      WorkflowJob(
+        "check-docs",
+        "Check Docs",
+        githubWorkflowJobSetup.value.toList ::: List(
+          WorkflowStep.Sbt(List("doc"), name = Some("Check Scaladocs")),
+        ),
+        javas = List(PrimaryJava),
+        scalas = List(scalaVersion.value),
+        matrixFailFast = Some(false),
       ),
     ),
     githubWorkflowPublishPreamble += WorkflowStep.Use("olafurpg", "setup-gpg", "v3"),
