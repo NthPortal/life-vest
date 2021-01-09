@@ -196,7 +196,6 @@ jobs:
 
   coverage:
     name: Coverage
-    if: env.COVERALLS_REPO_TOKEN != ''
     strategy:
       fail-fast: false
       matrix:
@@ -229,7 +228,8 @@ jobs:
             ~/Library/Caches/Coursier/v1
           key: ${{ runner.os }}-sbt-cache-v2-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('project/build.properties') }}
 
-      - name: Coverage
+      - name: Coveralls
+        if: env.COVERALLS_REPO_TOKEN != ''
         run: sbt ++${{ matrix.scala }} coverage test coverageAggregate coveralls
 
   formatting:
