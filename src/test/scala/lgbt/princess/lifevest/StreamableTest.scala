@@ -81,6 +81,7 @@ class StreamableTest extends BaseSpec {
   check(Instance(Nil, S(Iterator.empty)))
   check(Instance(List(1), S(Iterator.single(1))))
   check(Instance(List(1, 2, 3), S(Iterator(1, 2, 3))))
+  check(Instance(List(1, 2, 3), S(List(1, 2, 3): IterableOnce[Int])))
   check(Instance(List(2), S(Vector(1, 2)).withFilter(_ % 2 == 0)))
 
   check(Instance(Nil, S(Source.empty)))
