@@ -13,7 +13,7 @@ A library for treating stream and non-stream transformations uniformly when proc
 **Scala 2.13**
 
 ```sbt
-libraryDependencies += "lgbt.princess" %% "life-vest" % "0.1.0"
+libraryDependencies += "lgbt.princess" %% "life-vest" % "0.2.0"
 ```
 
 ## Usage
