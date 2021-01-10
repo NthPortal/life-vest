@@ -153,7 +153,12 @@ sealed trait Streamable[+A] {
    * @tparam B the element type of the returned Streamable
    */
   def flatMap[B](f: A => IterableOnce[B])(implicit @unused mcs: MutableCollectionSupport): FMMaterialized[B] =
-    flatMap(elem => toImmutable(f(elem)))
+    flatMap {
+      f(_) match {
+        case elems: i.Iterable[B] => elems
+        case elems                => i.Seq from elems
+      }
+    }
 }
 
 object Streamable {
@@ -178,14 +183,8 @@ object Streamable {
   def single[A](elem: A): Materialized[A] = Materialized.Single(elem)
 
   /** @return a Streamable containing the elements of a possibly mutable collection */
-  def apply[A](elems: IterableOnce[A])(implicit mcs: MutableCollectionSupport): Materialized[A] =
-    Materialized(elems, mcs)
-
-  @inline private def toImmutable[B](elems: IterableOnce[B]): i.Iterable[B] =
-    elems match {
-      case elems: i.Iterable[B] => elems
-      case elems                => i.Seq from elems
-    }
+  def apply[A](elems: IterableOnce[A])(implicit @unused mcs: MutableCollectionSupport): Materialized[A] =
+    Materialized.mutable(elems)
 
   @throws[UnsupportedOperationException]
   @inline private def foldMultipleToOption(): Nothing =
@@ -245,7 +244,7 @@ object Streamable {
       override def flatMap[B](f: A => Streamed[B])(implicit fmb: FlatMapBehavior, d: Diff2): Mixed[B] =
         Mixed.Single(f(elem))
       override def flatMap[B](f: A => IterableOnce[B])(implicit mcs: MutableCollectionSupport): Materialized[B] =
-        Materialized(f(elem), mcs)
+        Materialized.mutable(f(elem))
     }
 
     abstract class ElemsShared[+A] extends Materialized[A] {
@@ -301,8 +300,8 @@ object Streamable {
         }
     }
 
-    final class Mutable[+A](override private[Streamable] val elems: c.Iterable[A]) extends ElemsShared[A] {
-      private[Streamable] def immutableElems: i.Iterable[A] = toImmutable(elems)
+    final case class Mutable[+A](override private[Streamable] val elems: c.Iterable[A]) extends ElemsShared[A] {
+      private[Streamable] def immutableElems: i.Iterable[A] = elems.toSeq
       protected def seqFactory: SeqFactory[i.Seq]           = i.Seq
     }
 
@@ -332,14 +331,15 @@ object Streamable {
         case _ => Elems(elems)
       }
 
-    def apply[A](elems: IterableOnce[A], @unused mcs: MutableCollectionSupport): Materialized[A] = {
+    def mutable[A](elems: IterableOnce[A]): Materialized[A] = {
       elems.knownSize match {
         case 0 => Empty
         case 1 => Single(elems.iterator.next())
         case _ =>
           elems match {
-            case elems: c.Iterable[A] => new Mutable[A](elems)
-            case elems                => apply(toImmutable(elems))
+            case elems: i.Iterable[A] => Elems(elems)
+            case elems: c.Iterable[A] => Mutable(elems)
+            case elems                => apply(i.Seq from elems)
           }
       }
     }
