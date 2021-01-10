@@ -5,6 +5,7 @@ ThisBuild / autoAPIMappings := true
 inThisBuild(
   Seq(
     organization := "lgbt.princess",
+    versionScheme := Some("early-semver"),
     homepage := Some(url("https://github.com/NthPortal/life-vest")),
     licenses := Seq("The Apache License, Version 2.0" -> url("https://www.apache.org/licenses/LICENSE-2.0.txt")),
     developers := List(
