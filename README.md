@@ -18,6 +18,8 @@ libraryDependencies += "lgbt.princess" %% "life-vest" % "0.1.0"
 
 ## Usage
 
+
+
 #### Wrapping collections, `Option`s and `Source`s
 
 The first enumerator in the `for` comprehension must be wrapped in a `Streamable(...)`,
@@ -58,10 +60,23 @@ returning a `Source`. This is similar to how you sometimes need to call `.toList
 on an `Option` when `flatMap`ing with collections, because `Option#flatMap` takes
 a function returning an `Option`, not a function returning a collection.
 
-#### `Streamable`s directly from elements
+#### Creating `Streamable`s directly from elements
 
 Besides creating `Streamable`s from collections, `Option`s and `Source`s, you can create
 `Streamable`s directly from elements. You can create a `Streamable` containing a single
 element using `Streamable.single`, and a `Streamable` from an arbitrary number of elements
 using the `Streamable.elems` varargs method. There is also a `Streamable.empty` method for
 returning a `Streamable` with no elements.
+
+#### Integrating a `Streamable` into an Akka Stream
+
+A `Streamable` can be easily flattened into a stream by calling `.toSource` on it.
+
+```scala
+import akka.stream.scaladsl.Flow
+import lgbt.princess.lifevest.Streamable
+
+def processJson(json: Json): Streamable[Result] = ???
+
+val processingFlow: Flow[Result] = Flow[Json].flatMapConcat(json => processJson(json).toSource)
+```
