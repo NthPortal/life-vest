@@ -312,7 +312,7 @@ object Streamable {
       def this(coll: collection.Iterable[A], p: A => Boolean)(fact: SeqFactory[i.Seq]) =
         this(coll.view filter p)(fact)
 
-      private[Streamable] def immutableElems: i.Iterable[A] = i.Seq from elems
+      private[Streamable] def immutableElems: i.Iterable[A] = seqFactory from elems
 
       // override so we don't evaluate filter multiple times
       override def foldToOption: Materialized[Option[A]] = {
