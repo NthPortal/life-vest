@@ -159,9 +159,6 @@ sealed trait Streamable[+A] {
 object Streamable {
   import Overload._
 
-  /** A [[akka.stream.scaladsl.Source Source]] with an arbitrary materialized value. */
-  type AnySource[A] = Source[A, _]
-
   /** @return a Streamable containing the element in an [[scala.Option Option]], if any */
   def apply[A](maybeElem: Option[A]): Materialized[A] = Materialized(maybeElem)
 
