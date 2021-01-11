@@ -1,4 +1,5 @@
 ThisBuild / scalaVersion := "2.13.4"
+ThisBuild / crossScalaVersions := Seq("2.13.4", "2.12.12")
 ThisBuild / autoAPIMappings := true
 
 // publishing info
@@ -91,7 +92,7 @@ inThisBuild(
           WorkflowStep.Sbt(List("scalafmtCheckAll", "scalafmtSbtCheck"), name = Some("Formatting")),
         ),
         javas = List(PrimaryJava),
-        scalas = List(scalaVersion.value),
+        scalas = crossScalaVersions.value.toList,
         needs = List("build"),
         matrixFailFast = Some(false),
       ),
@@ -132,15 +133,21 @@ val sharedSettings = Seq(
   ),
   scalacOptions ++= Seq(
     "-Xlint",
+    "-deprecation",
     "-feature",
-    "-Werror",
   ),
+  scalacOptions ++= {
+    CrossVersion.partialVersion(scalaVersion.value) match {
+      case Some((2, 13)) => Seq("-Werror")
+      case _             => Nil
+    }
+  },
   scalacOptions ++= {
     if (isSnapshot.value) Nil
     else
       CrossVersion.partialVersion(scalaVersion.value) match {
-        case Some((2, 13)) => Seq("-opt:l:inline", "-opt-inline-from:lgbt.princess.lifevest.**")
-        case _             => Nil
+        case Some((2, 12 | 13)) => Seq("-opt:l:inline", "-opt-inline-from:lgbt.princess.lifevest.**")
+        case _                  => Nil
       }
   },
 )

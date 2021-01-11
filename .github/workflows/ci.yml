@@ -23,7 +23,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        scala: [2.13.4]
+        scala: [2.13.4, 2.12.12]
         java:
           - adopt@1.8
           - adopt@1.11
@@ -111,6 +111,16 @@ jobs:
           tar xf targets.tar
           rm targets.tar
 
+      - name: Download target directories (2.12.12)
+        uses: actions/download-artifact@v2
+        with:
+          name: target-${{ matrix.os }}-2.12.12-${{ matrix.java }}
+
+      - name: Inflate target directories (2.12.12)
+        run: |
+          tar xf targets.tar
+          rm targets.tar
+
       - uses: olafurpg/setup-gpg@v3
 
       - env:
@@ -127,7 +137,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        scala: [2.13.4]
+        scala: [2.13.4, 2.12.12]
         java:
           - adopt@1.8
           - adopt@1.11
@@ -167,7 +177,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        scala: [2.13.4]
+        scala: [2.13.4, 2.12.12]
         java: [adopt@1.8]
     runs-on: ${{ matrix.os }}
     steps:
@@ -203,7 +213,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        scala: [2.13.4]
+        scala: [2.13.4, 2.12.12]
         java: [adopt@1.8]
     runs-on: ${{ matrix.os }}
     env:
@@ -242,7 +252,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        scala: [2.13.4]
+        scala: [2.13.4, 2.12.12]
         java: [adopt@1.8]
     runs-on: ${{ matrix.os }}
     steps:
