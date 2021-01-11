@@ -4,6 +4,7 @@ import akka.stream.scaladsl.Source
 import lgbt.princess.lifevest.{Streamable => S}
 import lgbt.princess.lifevest.Streamable.MutableCollectionSupport.Implicits.support
 
+import scala.collection.compat._
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 

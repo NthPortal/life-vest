@@ -3,7 +3,8 @@ package lgbt.princess.lifevest
 import akka.stream.scaladsl.Source
 
 import scala.annotation.{implicitNotFound, unused}
-import scala.collection.{Factory, SeqFactory, View, immutable => i, mutable => m}
+import scala.collection.compat._
+import scala.collection.{SeqFactory, View, immutable => i, mutable => m}
 import scala.{collection => c}
 
 /** Something that can be streamed as a [[akka.stream.scaladsl.Source Source]]. */
@@ -117,7 +118,7 @@ sealed trait Streamable[+A] {
    * @tparam B the element type of the returned Streamable
    */
   def flatMap[B](f: A => Materialized[B])(implicit @unused d: Diff1): FMMaterialized[B] =
-    flatMap(f(_).immutableElems)
+    flatMap(f(_: A).immutableElems)
 
   /**
    * Transforms this Streamable by applying a function to each element of
@@ -127,7 +128,7 @@ sealed trait Streamable[+A] {
    * @tparam B the element type of the returned Streamable
    */
   def flatMap[B](f: A => Option[B])(implicit @unused d: Diff2): FMMaterialized[B] =
-    flatMap(f(_).toList)
+    flatMap(f(_: A).toList)
 
   /**
    * Transforms this Streamable by applying a function to each element of
@@ -140,7 +141,7 @@ sealed trait Streamable[+A] {
    * @tparam B the element type of the returned Streamable
    */
   def flatMap[B](f: A => Streamed[B])(implicit fmb: FlatMapBehavior, @unused d: Diff2): FMStreamed[B] =
-    flatMap(f(_).toSource)
+    flatMap(f(_: A).toSource)
 
   /**
    * Transforms this Streamable by applying a function to each element of
@@ -154,7 +155,7 @@ sealed trait Streamable[+A] {
    */
   def flatMap[B](f: A => IterableOnce[B])(implicit @unused mcs: MutableCollectionSupport): FMMaterialized[B] =
     flatMap {
-      f(_) match {
+      f(_: A) match {
         case elems: i.Iterable[B] => elems
         case elems                => i.Seq from elems
       }
@@ -525,7 +526,7 @@ object Streamable {
      * with the given breadth.
      */
     final case class Merge(breadth: Int) extends FlatMapBehavior {
-      private[Streamable] def flatMapSource[A, B](source: Source[A, _])(f: A => Source[B, _]): Source[B, _] =
+      private[Streamable] def flatMapSource[A, B](source: Source[A, _])(f: A => Source[B, Any]): Source[B, _] =
         source.flatMapMerge(breadth, f)
     }
 

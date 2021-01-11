@@ -129,6 +129,7 @@ val sharedSettings = Seq(
   mimaFailOnNoPrevious := true,
   libraryDependencies ++= Seq(
     "com.typesafe.akka" %% "akka-stream" % akkaVersion,
+    "org.scala-lang.modules" %% "scala-collection-compat" % "2.3.2",
     "org.scalatest"     %% "scalatest"   % "3.2.3" % Test,
   ),
   scalacOptions ++= Seq(
@@ -139,7 +140,7 @@ val sharedSettings = Seq(
   scalacOptions ++= {
     CrossVersion.partialVersion(scalaVersion.value) match {
       case Some((2, 13)) => Seq("-Werror")
-      case _             => Nil
+      case _             => Seq("-language:higherKinds")
     }
   },
   scalacOptions ++= {
