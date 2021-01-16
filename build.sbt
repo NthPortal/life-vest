@@ -122,7 +122,7 @@ inThisBuild(
   ),
 )
 
-val akkaVersion = "2.6.10"
+val akkaVersion = "2.6.11"
 val sharedSettings = Seq(
   mimaPreviousArtifacts := Set().map(organization.value %% name.value % _),
   mimaFailOnNoPrevious := true,
