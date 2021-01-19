@@ -1,3 +1,5 @@
+import sbtghactions.UseRef
+
 ThisBuild / scalaVersion := "2.13.4"
 ThisBuild / autoAPIMappings := true
 
@@ -33,7 +35,6 @@ inThisBuild(
   Seq(
     githubWorkflowTargetTags ++= Seq("v*"),
     githubWorkflowPublishTargetBranches ++= Seq(
-      RefPredicate.Equals(Ref.Branch("main")),
       RefPredicate.StartsWith(Ref.Tag("v")),
     ),
     githubWorkflowJavaVersions := Seq(
@@ -107,7 +108,7 @@ inThisBuild(
         matrixFailFast = Some(false),
       ),
     ),
-    githubWorkflowPublishPreamble += WorkflowStep.Use("olafurpg", "setup-gpg", "v3"),
+    githubWorkflowPublishPreamble += WorkflowStep.Use(UseRef.Public("olafurpg", "setup-gpg", "v3")),
     githubWorkflowPublish := Seq(
       WorkflowStep.Sbt(
         List("ci-release"),
