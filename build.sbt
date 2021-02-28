@@ -82,7 +82,7 @@ inThisBuild(
         env = Map("COVERALLS_REPO_TOKEN" -> "${{ secrets.COVERALLS_REPO_TOKEN }}"),
         javas = List(PrimaryJava),
         scalas = crossScalaVersions.value.toList,
-        needs = List("build"),
+        needs = List("test"),
         matrixFailFast = Some(false),
       ),
       WorkflowJob(
