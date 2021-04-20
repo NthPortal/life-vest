@@ -129,7 +129,7 @@ val sharedSettings = Seq(
   mimaFailOnNoPrevious := true,
   libraryDependencies ++= Seq(
     "com.typesafe.akka" %% "akka-stream" % akkaVersion,
-    "org.scalatest"     %% "scalatest"   % "3.2.7" % Test,
+    "org.scalatest"     %% "scalatest"   % "3.2.8" % Test,
   ),
   scalacOptions ++= Seq(
     "-Xlint",
