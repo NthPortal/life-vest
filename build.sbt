@@ -1,15 +1,15 @@
 import sbtghactions.UseRef
 
-ThisBuild / scalaVersion := "2.13.6"
+ThisBuild / scalaVersion    := "2.13.6"
 ThisBuild / autoAPIMappings := true
 
 // publishing info
 inThisBuild(
   Seq(
-    organization := "lgbt.princess",
+    organization  := "lgbt.princess",
     versionScheme := Some("early-semver"),
-    homepage := Some(url("https://github.com/NthPortal/life-vest")),
-    licenses := Seq("The Apache License, Version 2.0" -> url("https://www.apache.org/licenses/LICENSE-2.0.txt")),
+    homepage      := Some(url("https://github.com/NthPortal/life-vest")),
+    licenses      := Seq("The Apache License, Version 2.0" -> url("https://www.apache.org/licenses/LICENSE-2.0.txt")),
     developers := List(
       Developer(
         "NthPortal",
@@ -126,7 +126,7 @@ inThisBuild(
 val akkaVersion = "2.6.16"
 val sharedSettings = Seq(
   mimaPreviousArtifacts := Set().map(organization.value %% name.value % _),
-  mimaFailOnNoPrevious := true,
+  mimaFailOnNoPrevious  := true,
   libraryDependencies ++= Seq(
     "com.typesafe.akka" %% "akka-stream" % akkaVersion,
     "org.scalatest"     %% "scalatest"   % "3.2.9" % Test,
