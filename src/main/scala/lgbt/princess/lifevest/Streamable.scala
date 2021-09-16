@@ -15,14 +15,13 @@ sealed trait Streamable[+A] {
   type Repr[+X] <: Streamable[X]
 
   /**
-   * The result of `flatMap`ing using a function that returns a
-   * [[Streamable.Materialized Materialized]] type.
+   * The result of `flatMap`ing using a function that returns a [[Streamable.Materialized Materialized]] type.
    */
   type FMMaterialized[+X] <: Streamable[X]
 
   /**
-   * The result of `flatMap`ing using a function that returns a
-   * [[Streamable.Streamed Streamed]] or [[Streamable.Mixed Mixed]] type.
+   * The result of `flatMap`ing using a function that returns a [[Streamable.Streamed Streamed]] or
+   * [[Streamable.Mixed Mixed]] type.
    */
   type FMStreamed[+X] <: Streamable[X]
 
@@ -30,21 +29,20 @@ sealed trait Streamable[+A] {
   def toSource: Source[A, _]
 
   /**
-   * Transforms this Streamable into a Streamable of a single element that is
-   * a collection containing this stream's elements.
+   * Transforms this Streamable into a Streamable of a single element that is a collection containing this stream's
+   * elements.
    *
-   * @param factory the factory with which to create a collection containing
-   *                all of this stream's elements
+   * @param factory
+   *   the factory with which to create a collection containing all of this stream's elements
    */
   def foldInto[C](factory: Factory[A, C]): Repr[C]
 
   /**
-   * Transforms this Streamable of one or zero elements into a Streamable of
-   * a single element that is an [[scala.Option Option]] containing this
-   * stream's element, if this stream is not empty.
+   * Transforms this Streamable of one or zero elements into a Streamable of a single element that is an
+   * [[scala.Option Option]] containing this stream's element, if this stream is not empty.
    *
-   * @throws scala.UnsupportedOperationException if this stream contains more
-   *                                             than one element
+   * @throws scala.UnsupportedOperationException
+   *   if this stream contains more than one element
    */
   @throws[UnsupportedOperationException]
   def foldToOption: Repr[Option[A]]
@@ -52,105 +50,121 @@ sealed trait Streamable[+A] {
   /**
    * Transforms this Streamable by applying a function to each element of the stream.
    *
-   * @param f the function to apply to each element
-   * @tparam B the element type of the returned Streamable
+   * @param f
+   *   the function to apply to each element
+   * @tparam B
+   *   the element type of the returned Streamable
    */
   def map[B](f: A => B): Repr[B]
 
   /**
    * Transforms this Streamable by only retaining elements satisfying a predicate.
    *
-   * @param p the predicate with which to test elements
+   * @param p
+   *   the predicate with which to test elements
    */
   def filter(p: A => Boolean): Repr[A]
 
   /**
    * Transforms this Streamable by only retaining elements satisfying a predicate.
    *
-   * If this Streamable is already materialized, this operation does not build a
-   * new collection of filtered elements, but instead uses a filtered view. This
-   * method is mainly used by `for` comprehensions.
+   * If this Streamable is already materialized, this operation does not build a new collection of filtered elements,
+   * but instead uses a filtered view. This method is mainly used by `for` comprehensions.
    *
-   * @param p the predicate with which to test elements
+   * @param p
+   *   the predicate with which to test elements
    */
   def withFilter(p: A => Boolean): Repr[A] = filter(p)
 
   /**
-   * Transforms this Streamable by applying a function to each element of
-   * the stream, and flattening the resulting collections into the stream.
+   * Transforms this Streamable by applying a function to each element of the stream, and flattening the resulting
+   * collections into the stream.
    *
-   * @param f the function to apply to each element
-   * @tparam B the element type of the returned Streamable
+   * @param f
+   *   the function to apply to each element
+   * @tparam B
+   *   the element type of the returned Streamable
    */
   def flatMap[B](f: A => i.Iterable[B]): FMMaterialized[B]
 
   /**
-   * Transforms this Streamable by applying a function to each element of
-   * the stream, and flattening the resulting
+   * Transforms this Streamable by applying a function to each element of the stream, and flattening the resulting
    * [[akka.stream.scaladsl.Source Sources]] into the stream.
    *
-   * @see [[Streamable.FlatMapBehavior]] for how to customize flattening
+   * @see
+   *   [[Streamable.FlatMapBehavior]] for how to customize flattening
    *
-   * @param f the function to apply to each element
-   * @tparam B the element type of the returned Streamable
+   * @param f
+   *   the function to apply to each element
+   * @tparam B
+   *   the element type of the returned Streamable
    */
   def flatMap[B](f: A => Source[B, _])(implicit fmb: FlatMapBehavior): FMStreamed[B]
 
   /**
-   * Transforms this Streamable by applying a function to each element of
-   * the stream, and flattening the resulting
+   * Transforms this Streamable by applying a function to each element of the stream, and flattening the resulting
    * [[Streamable.Mixed Mixed Streamables]] into the stream.
    *
-   * @see [[Streamable.FlatMapBehavior]] for how to customize flattening
+   * @see
+   *   [[Streamable.FlatMapBehavior]] for how to customize flattening
    *
-   * @param f the function to apply to each element
-   * @tparam B the element type of the returned Streamable
+   * @param f
+   *   the function to apply to each element
+   * @tparam B
+   *   the element type of the returned Streamable
    */
   def flatMap[B](f: A => Mixed[B])(implicit fmb: FlatMapBehavior, @unused d: Diff1): FMStreamed[B]
 
   /**
-   * Transforms this Streamable by applying a function to each element of
-   * the stream, and flattening the resulting
+   * Transforms this Streamable by applying a function to each element of the stream, and flattening the resulting
    * [[Streamable.Materialized Materialized Streamables]] into the stream.
    *
-   * @param f the function to apply to each element
-   * @tparam B the element type of the returned Streamable
+   * @param f
+   *   the function to apply to each element
+   * @tparam B
+   *   the element type of the returned Streamable
    */
   def flatMap[B](f: A => Materialized[B])(implicit @unused d: Diff1): FMMaterialized[B] =
     flatMap(f(_).immutableElems)
 
   /**
-   * Transforms this Streamable by applying a function to each element of
-   * the stream, and flattening the resulting [[scala.Option Options]] into the stream.
+   * Transforms this Streamable by applying a function to each element of the stream, and flattening the resulting
+   * [[scala.Option Options]] into the stream.
    *
-   * @param f the function to apply to each element
-   * @tparam B the element type of the returned Streamable
+   * @param f
+   *   the function to apply to each element
+   * @tparam B
+   *   the element type of the returned Streamable
    */
   def flatMap[B](f: A => Option[B])(implicit @unused d: Diff2): FMMaterialized[B] =
     flatMap(f(_).toList)
 
   /**
-   * Transforms this Streamable by applying a function to each element of
-   * the stream, and flattening the resulting
+   * Transforms this Streamable by applying a function to each element of the stream, and flattening the resulting
    * [[Streamable.Streamed Streamed Streamables]] into the stream.
    *
-   * @see [[Streamable.FlatMapBehavior]] for how to customize flattening
+   * @see
+   *   [[Streamable.FlatMapBehavior]] for how to customize flattening
    *
-   * @param f the function to apply to each element
-   * @tparam B the element type of the returned Streamable
+   * @param f
+   *   the function to apply to each element
+   * @tparam B
+   *   the element type of the returned Streamable
    */
   def flatMap[B](f: A => Streamed[B])(implicit fmb: FlatMapBehavior, @unused d: Diff2): FMStreamed[B] =
     flatMap(f(_).toSource)
 
   /**
-   * Transforms this Streamable by applying a function to each element of
-   * the stream, and flattening the resulting collections into the stream.
+   * Transforms this Streamable by applying a function to each element of the stream, and flattening the resulting
+   * collections into the stream.
    *
-   * @note This method requires [[Streamable.MutableCollectionSupport]] in
-   *       the implicit scope.
+   * @note
+   *   This method requires [[Streamable.MutableCollectionSupport]] in the implicit scope.
    *
-   * @param f the function to apply to each element
-   * @tparam B the element type of the returned Streamable
+   * @param f
+   *   the function to apply to each element
+   * @tparam B
+   *   the element type of the returned Streamable
    */
   def flatMap[B](f: A => IterableOnce[B])(implicit @unused mcs: MutableCollectionSupport): FMMaterialized[B] =
     flatMap {
@@ -390,8 +404,7 @@ object Streamable {
   }
 
   /**
-   * A [[Streamable]] with elements backed by a mixture of collections and
-   * [[akka.stream.scaladsl.Source Sources]].
+   * A [[Streamable]] with elements backed by a mixture of collections and [[akka.stream.scaladsl.Source Sources]].
    */
   sealed trait Mixed[+A] extends Streamable[A] {
     private[Streamable] def elems: i.Iterable[Streamed[A]]
@@ -505,8 +518,7 @@ object Streamable {
    *   - [[FlatMapBehavior.Concat Concat]] uses `flatMapConcat`
    *   - [[FlatMapBehavior.Merge Merge]] uses `flatMapMerge`
    *
-   * The default behavior is Concat, because it produces and retains
-   * a stable element order.
+   * The default behavior is Concat, because it produces and retains a stable element order.
    */
   sealed trait FlatMapBehavior {
     private[Streamable] def flatMapSource[A, B](source: Source[A, _])(f: A => Source[B, _]): Source[B, _]
@@ -521,8 +533,7 @@ object Streamable {
     }
 
     /**
-     * `flatMap` a `Source` into the stream using `flatMapMerge`
-     * with the given breadth.
+     * `flatMap` a `Source` into the stream using `flatMapMerge` with the given breadth.
      */
     final case class Merge(breadth: Int) extends FlatMapBehavior {
       private[Streamable] def flatMapSource[A, B](source: Source[A, _])(f: A => Source[B, _]): Source[B, _] =
@@ -530,15 +541,13 @@ object Streamable {
     }
 
     /**
-     * The default behavior is [[Concat]] because the resulting
-     * elements have a stable order.
+     * The default behavior is [[Concat]] because the resulting elements have a stable order.
      */
     implicit def default: FlatMapBehavior = Concat
   }
 
   /**
-   * Utility classes for enabling overloads that would otherwise have
-   * the same erased signatures.
+   * Utility classes for enabling overloads that would otherwise have the same erased signatures.
    */
   object Overload {
     sealed trait Diff1
@@ -555,8 +564,7 @@ object Streamable {
       "MutableCollectionSupport.Implicits.support"
 
   /**
-   * A type needed in the implicit scope to allow transformations
-   * using mutable collections.
+   * A type needed in the implicit scope to allow transformations using mutable collections.
    *
    * Import [[MutableCollectionSupport.Implicits.support]] to use.
    */
