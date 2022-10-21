@@ -1,6 +1,6 @@
 import sbtghactions.UseRef
 
-ThisBuild / scalaVersion    := "2.13.6"
+ThisBuild / scalaVersion    := "2.13.10"
 ThisBuild / autoAPIMappings := true
 
 // publishing info
