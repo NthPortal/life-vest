@@ -123,13 +123,13 @@ inThisBuild(
   ),
 )
 
-val akkaVersion = "2.6.18"
+val akkaVersion = "2.6.20"
 val sharedSettings = Seq(
   mimaPreviousArtifacts := Set().map(organization.value %% name.value % _),
   mimaFailOnNoPrevious  := true,
   libraryDependencies ++= Seq(
     "com.typesafe.akka" %% "akka-stream" % akkaVersion,
-    "org.scalatest"     %% "scalatest"   % "3.2.11" % Test,
+    "org.scalatest"     %% "scalatest"   % "3.2.17" % Test,
   ),
   scalacOptions ++= Seq(
     "-Xlint",
