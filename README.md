@@ -1,6 +1,6 @@
 # life-vest
 
-![Build Status](https://img.shields.io/github/workflow/status/NthPortal/life-vest/Continuous%20Integration?logo=github&style=for-the-badge)
+![Build Status](https://img.shields.io/github/actions/workflow/status/NthPortal/life-vest/ci.yml?branch=main&logo=github&style=for-the-badge)
 [![Coverage Status](https://img.shields.io/coveralls/github/NthPortal/life-vest/main?logo=coveralls&style=for-the-badge)](https://coveralls.io/github/NthPortal/life-vest?branch=main)
 [![Maven Central](https://img.shields.io/maven-central/v/lgbt.princess/life-vest_2.13?logo=apache-maven&style=for-the-badge)](https://mvnrepository.com/artifact/lgbt.princess/life-vest)
 [![Versioning](https://img.shields.io/badge/versioning-semver%202.0.0-blue.svg?logo=semver&style=for-the-badge)](http://semver.org/spec/v2.0.0.html)
